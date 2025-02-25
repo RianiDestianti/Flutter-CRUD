@@ -10,21 +10,32 @@ class HalamanProduk extends StatefulWidget {
 }
 
 class _HalamanProdukState extends State<HalamanProduk> {
-  List _listdata = [];
+  List<dynamic> _listdata = [];
   bool _loading = true;
 
-  Future _getdata() async {
+  Future<void> _getdata() async {
     try {
-     final respon = await http.get(Uri.parse('http://192.168.1.15/api_produk/read.php'));
+      final response = await http.get(Uri.parse('http://180.244.133.180/api_produk/read.php'));
 
-      if (respon.statusCode == 200) {
-        final data = jsonDecode(respon.body);
-        setState(() {
-          _listdata = data;
-          _loading = false;
-        });
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // Jika API mengembalikan objek dengan key tertentu, sesuaikan aksesnya
+        if (data is Map<String, dynamic> && data.containsKey('produk')) {
+          setState(() {
+            _listdata = data['produk']; // Ambil daftar produk dari key 'produk'
+            _loading = false;
+          });
+        } else if (data is List) {
+          setState(() {
+            _listdata = data; // Jika langsung berupa List, gunakan langsung
+            _loading = false;
+          });
+        } else {
+          throw Exception("Format data tidak sesuai");
+        }
       } else {
-        print("Failed to load data: ${respon.statusCode}");
+        print("Failed to load data: ${response.statusCode}");
         setState(() {
           _loading = false;
         });
@@ -47,20 +58,26 @@ class _HalamanProdukState extends State<HalamanProduk> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Halaman Produk'),
+        title: const Text('Halaman Produk'),
         backgroundColor: Colors.deepOrange,
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _listdata.isEmpty
-              ? Center(child: Text("No products found"))
+              ? const Center(child: Text("No products found"))
               : ListView.builder(
                   itemCount: _listdata.length,
                   itemBuilder: (context, index) {
+                    
+
+
+
+                    
+                    var produk = _listdata[index];
                     return Card(
                       child: ListTile(
-                        title: Text(_listdata[index]['nama_produk'] ?? 'No Name'),
-                        subtitle: Text(_listdata[index]['harga_produk'] ?? 'No Price'),
+                        title: Text(produk['nama_produk']?.toString() ?? 'No Name'),
+                        subtitle: Text('Rp ${produk['harga_produk']?.toString() ?? 'No Price'}'),
                       ),
                     );
                   },
