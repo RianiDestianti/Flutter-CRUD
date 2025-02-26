@@ -68,11 +68,6 @@ class _HalamanProdukState extends State<HalamanProduk> {
               : ListView.builder(
                   itemCount: _listdata.length,
                   itemBuilder: (context, index) {
-                    
-
-
-
-                    
                     var produk = _listdata[index];
                     return Card(
                       child: ListTile(

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'detail.dart';
+import 'adddata.dart';
+
 
 
 void main() {
@@ -29,7 +31,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Future<List<dynamic>> fetchData() async {
-    const String url = 'http://192.168.100.212/my_store/getdata.php';
+    const String url = 'http://10.0.2.2/my_store/getdata.php';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -51,7 +53,14 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(title: const Text("My Store")),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => AddData(),
+    ),
+  );
+},
+
       ),
       body: FutureBuilder<List<dynamic>>(
         future: fetchData(),
